@@ -335,10 +335,10 @@
 
       renderList();
 
-      // ⭐ 確保至少顯示 2 秒才隱藏
+      // ⭐ 確保至少顯示 1 秒才隱藏
       setTimeout(() => {
         loadingOverlay.style.display = "none";
-      }, 2000);
+      }, 1000);
     }
 
     function renderList(withAnimation = false) {
@@ -423,3 +423,4 @@
   </script>
 </body>
 </html>
+
