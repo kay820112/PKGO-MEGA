@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Pokemon GO 超級進化查詢</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(to bottom right, #eff6ff, #f5f3ff);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #1f2937;
+    }
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+    }
+    .type-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      margin-right: 4px;
+    }
+    /* 顏色對照 */
+    .一般 { background-color: #9ca3af; }
+    .火 { background-color: #ef4444; }
+    .水 { background-color: #3b82f6; }
+    .草 { background-color: #22c55e; }
+    .電 { background-color: #facc15; color: black; }
+    .冰 { background-color: #67e8f9; color: black; }
+    .格鬥 { background-color: #b91c1c; }
+    .毒 { background-color: #a855f7; }
+    .地面 { background-color: #ca8a04; }
+    .飛行 { background-color: #818cf8; }
+    .超能力 { background-color: #ec4899; }
+    .蟲 { background-color: #84cc16; }
+    .岩石 { background-color: #a16207; }
+    .幽靈 { background-color: #6b21a8; }
+    .龍 { background-color: #4338ca; }
+    .惡 { background-color: #374151; }
+    .鋼 { background-color: #6b7280; }
+    .妖精 { background-color: #f9a8d4; }
+    .pokemon-item {
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .pokemon-item:hover {
+      border-color: #9ca3af;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .pokemon-item.active {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    /* 篩選區塊樣式 */
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .filter-title {
+      font-weight: bold;
+      color: #1f2937;
+      font-size: 16px;
+    }
+    .clear-btn {
+      background: none;
+      border: none;
+      color: #3b82f6;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .clear-btn:hover {
+      text-decoration: underline;
+    }
+    .filter-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ✅ 內陰影 + hover/focus 效果 */
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      background-color: #fff;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.08); /* ⭐ 內陰影 */
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .filter-group select:hover,
+    .filter-group input:hover {
+      border-color: #3b82f6;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12); /* hover 更明顯 */
+    }
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 0 0 2px rgba(37, 99, 235, 0.2); /* 內陰影 + 外光暈 */
+    }
+
+    /* 搜尋框帶放大鏡 */
+    .search-box input {
+      padding-left: 32px;
+      height: 42px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="%23a1a1aa" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat 8px center;
+      background-size: 16px 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1 class="title">Pokemon GO 超級進化查詢</h1>
+      <p class="subtitle">選擇屬性或搜尋寶可夢名稱</p>
+    </div>
+
+    <!-- 查詢區 -->
+    <div class="card">
+      <div class="filter-header">
+        <span class="filter-title">篩選條件</span>
+        <button id="clearBtn" class="clear-btn">清除篩選</button>
+      </div>
+      <div class="filter-body">
+        <div class="filter-group">
+          <select id="typeSelect">
+            <option value="" class="placeholder">全部屬性</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <select id="pokemonSelect">
+            <option value="" class="placeholder">請選擇寶可夢</option>
+          </select>
+        </div>
+        <div class="filter-group search-box">
+          <input id="searchInput" placeholder="搜尋寶可夢名稱..." />
+        </div>
+      </div>
+    </div>
+
+    <!-- 詳細資訊 -->
+    <div id="detailCard" class="card" style="display:none;"></div>
+
+    <!-- 清單 -->
+    <div class="card">
+      <h3 id="listTitle">所有超級進化寶可夢</h3>
+      <div id="pokemonList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const url =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrBQ6lQHjl-iuSWbQJjlgJXovQRFHqQ0ML4L4VoPVjIQYXygc3VxlINrGs8nY3NqDh_z-bE38M4I-Z/pub?gid=0&single=true&output=csv";
+
+    let data = [];
+    let selectedType = "";
+    let selectedPokemon = "";
+    let searchTerm = "";
+
+    const typeSelect = document.getElementById("typeSelect");
+    const pokemonSelect = document.getElementById("pokemonSelect");
+    const searchInput = document.getElementById("searchInput");
+    const detailCard = document.getElementById("detailCard");
+    const pokemonList = document.getElementById("pokemonList");
+    const listTitle = document.getElementById("listTitle");
+
+    async function loadSheet() {
+      const res = await fetch(url);
+      const text = await res.text();
+      const rows = text.split("\n").map(r => r.split(","));
+
+      const headers = rows[0].slice(1);
+
+      data = rows.slice(1).map(r => {
+        const name = r[0].trim();
+        const types = headers.filter((_, i) => r[i+1] && r[i+1].trim() === "✔");
+        return { name, types };
+      });
+
+      // 填屬性下拉
+      headers.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+        typeSelect.appendChild(opt);
+      });
+
+      // 填寶可夢下拉
+      data.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.name;
+        opt.textContent = p.name;
+        pokemonSelect.appendChild(opt);
+      });
+
+      renderList();
+    }
+
+    function renderList() {
+      let filtered = data.filter(p => {
+        return (!selectedType || p.types.includes(selectedType)) &&
+               (!searchTerm || p.name.includes(searchTerm));
+      });
+
+      listTitle.textContent = selectedType
+        ? `${selectedType}屬性寶可夢 (共 ${filtered.length} 隻)`
+        : `所有超級進化寶可夢 (共 ${filtered.length} 隻)`;
+
+      pokemonList.innerHTML = "";
+      pokemonSelect.innerHTML = `<option value="" class="placeholder">請選擇寶可夢</option>`;
+
+      filtered.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "pokemon-item" + (selectedPokemon === p.name ? " active" : "");
+        div.innerHTML = `<h4>${p.name}</h4>` + 
+                        p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("");
+        div.onclick = () => { selectedPokemon = p.name; renderDetail(); renderList(); };
+        pokemonList.appendChild(div);
+
+        const opt = document.createElement("option");
+        opt.value = p.name;
+        opt.textContent = p.name;
+        pokemonSelect.appendChild(opt);
+      });
+    }
+
+    function renderDetail() {
+      if (!selectedPokemon) {
+        detailCard.style.display = "none";
+        return;
+      }
+      const p = data.find(x => x.name === selectedPokemon);
+      detailCard.style.display = "block";
+      detailCard.innerHTML = `<h2>${p.name}</h2><div>${p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("")}</div>`;
+    }
+
+    // 綁定事件
+    typeSelect.onchange = e => { selectedType = e.target.value; selectedPokemon = ""; renderDetail(); renderList(); };
+    pokemonSelect.onchange = e => { selectedPokemon = e.target.value; renderDetail(); renderList(); };
+    searchInput.oninput = e => { searchTerm = e.target.value; renderList(); };
+    document.getElementById("clearBtn").onclick = () => {
+      selectedType = "";
+      selectedPokemon = "";
+      searchTerm = "";
+      typeSelect.value = "";
+      pokemonSelect.value = "";
+      searchInput.value = "";
+      renderDetail();
+      renderList();
+    };
+
+    loadSheet();
+  </script>
+</body>
+</html>
