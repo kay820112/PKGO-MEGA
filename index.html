@@ -45,6 +45,17 @@
       align-items: center;
       z-index: 9999;
     }
+    .running-pikachu {
+      width: 100px;
+      height: auto;
+      animation: runLeftRight 2s linear infinite;
+    }
+    @keyframes runLeftRight {
+      0%   { transform: translateX(-120px) scaleX(1); }
+      49%  { transform: translateX(120px) scaleX(1); }
+      50%  { transform: translateX(120px) scaleX(-1); } /* 翻轉掉頭 */
+      100% { transform: translateX(-120px) scaleX(-1); }
+    }
 
     /* ====== Type Badge ====== */
     .type-badge {
@@ -215,9 +226,9 @@
   </style>
 </head>
 <body>
-  <!-- ⭐ 載入遮罩 (改成 GIF) -->
+  <!-- ⭐ 載入遮罩 (皮卡丘左右來回跑) -->
   <div id="loadingOverlay">
-    <img src="pikachu_running.gif" alt="Loading..." style="width:100px; height:auto;" />
+    <img class="running-pikachu" src="pikachu_running.gif" alt="Loading..." />
   </div>
 
   <div class="container">
@@ -303,7 +314,11 @@
       });
 
       renderList();
-      loadingOverlay.style.display = "none"; // ⭐ 載入完成隱藏遮罩
+
+      // ⭐ 確保至少顯示 2 秒才隱藏
+      setTimeout(() => {
+        loadingOverlay.style.display = "none";
+      }, 2000);
     }
 
     function renderList(withAnimation = false) {
