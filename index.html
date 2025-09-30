@@ -90,13 +90,21 @@
       transition: all 0.3s ease;
     }
 
-    /* ⭐ hover = 動態漸層（速度變慢） */
+    /* ⭐ hover = 動態漸層（速度放慢） */
     .pokemon-item:hover h4 {
       background: linear-gradient(270deg, #2563eb, #9333ea, #2563eb);
       background-size: 600% 600%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: gradientMove 6s ease infinite; /* ⭐ 放慢到 6 秒 */
+      animation: gradientMove 3s ease infinite;
+    }
+
+    /* ⭐ active = 靜態漸層（不動，保持醒目） */
+    .pokemon-item.active h4 {
+      background: linear-gradient(90deg, #2563eb, #9333ea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: none;
     }
 
     @keyframes gradientMove {
