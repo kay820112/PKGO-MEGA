@@ -43,7 +43,13 @@
       color: white;
       margin-right: 4px;
       margin-top: 4px;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
+    .type-badge:hover {
+      box-shadow: 0 0 6px currentColor;
+      transform: scale(1.05);
+    }
+
     /* 顏色對照 */
     .一般 { background-color: #9ca3af; }
     .火 { background-color: #ef4444; }
@@ -64,6 +70,7 @@
     .鋼 { background-color: #6b7280; }
     .妖精 { background-color: #f9a8d4; }
 
+    /* ⭐ 卡片本身 */
     .pokemon-item {
       border: 2px solid #e5e7eb;
       border-radius: 8px;
@@ -71,10 +78,11 @@
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
+    /* ⭐ hover 放大 */
     .pokemon-item:hover {
       border-color: #9ca3af;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transform: scale(1.03); /* ⭐ 卡片放大 */
+      transform: scale(1.03);
     }
     .pokemon-item.active {
       border-color: #3b82f6;
@@ -89,17 +97,15 @@
       color: #111827;
       transition: all 0.3s ease;
     }
-
-    /* ⭐ hover = 動態漸層（速度放慢） */
+    /* ⭐ hover 名稱漸層動畫 */
     .pokemon-item:hover h4 {
       background: linear-gradient(270deg, #2563eb, #9333ea, #2563eb);
       background-size: 600% 600%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: gradientMove 3s ease infinite;
+      animation: gradientMove 6s ease infinite;
     }
-
-    /* ⭐ active = 靜態漸層（不動，保持醒目） */
+    /* ⭐ active 名稱靜態漸層 */
     .pokemon-item.active h4 {
       background: linear-gradient(90deg, #2563eb, #9333ea);
       -webkit-background-clip: text;
@@ -113,7 +119,19 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* 篩選區塊樣式 */
+    /* ⭐ 進場動畫（只在搜尋/篩選時加 class） */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.4s ease forwards;
+    }
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .filter-header {
       display: flex;
       justify-content: space-between;
@@ -140,7 +158,6 @@
       flex-direction: column;
       gap: 12px;
     }
-
     .filter-group select,
     .filter-group input {
       width: 100%;
@@ -167,7 +184,6 @@
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.15),
                   0 0 0 2px rgba(37, 99, 235, 0.2);
     }
-
     .search-box input {
       padding-left: 32px;
       height: 42px;
@@ -275,7 +291,7 @@
       renderList();
     }
 
-    function renderList() {
+    function renderList(withAnimation = false) {
       let filtered = data.filter(p => {
         return (!selectedType || p.types.includes(selectedType)) &&
                (!searchTerm || p.name.includes(searchTerm));
@@ -288,12 +304,23 @@
       pokemonList.innerHTML = "";
       pokemonSelect.innerHTML = `<option value="">請選擇寶可夢</option>`;
 
-      filtered.forEach(p => {
+      filtered.forEach((p, index) => {
         const div = document.createElement("div");
         div.className = "pokemon-item" + (selectedPokemon === p.name ? " active" : "");
-        div.innerHTML = `<h4>${p.name}</h4>` + 
+
+        // ⭐ 只有搜尋/篩選時才有進場動畫
+        if (withAnimation) {
+          div.classList.add("fade-up");
+          div.style.animationDelay = `${index * 0.05}s`;
+        }
+
+        div.innerHTML = `<h4>${p.name}</h4>` +
                         p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("");
-        div.onclick = () => { selectedPokemon = p.name; renderDetail(); renderList(); };
+        div.onclick = () => {
+          selectedPokemon = p.name;
+          renderDetail();
+          renderList(false); // 點擊不跑動畫
+        };
         pokemonList.appendChild(div);
 
         const opt = document.createElement("option");
@@ -313,9 +340,28 @@
       detailCard.innerHTML = `<h2>${p.name}</h2><div>${p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("")}</div>`;
     }
 
-    typeSelect.onchange = e => { selectedType = e.target.value; selectedPokemon = ""; renderDetail(); renderList(); };
-    pokemonSelect.onchange = e => { selectedPokemon = e.target.value; renderDetail(); renderList(); };
-    searchInput.oninput = e => { searchTerm = e.target.value; renderList(); };
+    typeSelect.onchange = e => {
+      selectedType = e.target.value;
+      selectedPokemon = "";
+      renderDetail();
+      renderList(true); // 篩選才跑動畫
+    };
+    pokemonSelect.onchange = e => {
+      selectedPokemon = e.target.value;
+      renderDetail();
+      renderList(false); // 選取不跑動畫
+    };
+
+    // ⭐ debounce 搜尋 500ms
+    let debounceTimer;
+    searchInput.oninput = e => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        searchTerm = e.target.value;
+        renderList(true); // 搜尋才跑動畫
+      }, 500);
+    };
+
     document.getElementById("clearBtn").onclick = () => {
       selectedType = "";
       selectedPokemon = "";
@@ -324,7 +370,7 @@
       pokemonSelect.value = "";
       searchInput.value = "";
       renderDetail();
-      renderList();
+      renderList(true); // 清除時也跑動畫
     };
 
     loadSheet();
