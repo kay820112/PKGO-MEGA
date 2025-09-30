@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ⭐ 手機正確縮放 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokemon GO 超級進化查詢</title>
   <style>
     body {
@@ -36,12 +36,13 @@
     }
     .type-badge {
       display: inline-block;
-      padding: 4px 10px;
+      padding: 2px 8px;
       border-radius: 9999px;
-      font-size: 14px;
+      font-size: 12px;   /* ⭐ 屬性縮小一點 */
       font-weight: bold;
       color: white;
       margin-right: 4px;
+      margin-top: 4px;
     }
     /* 顏色對照 */
     .一般 { background-color: #9ca3af; }
@@ -62,6 +63,7 @@
     .惡 { background-color: #374151; }
     .鋼 { background-color: #6b7280; }
     .妖精 { background-color: #f9a8d4; }
+
     .pokemon-item {
       border: 2px solid #e5e7eb;
       border-radius: 8px;
@@ -76,6 +78,14 @@
     .pokemon-item.active {
       border-color: #3b82f6;
       background: #eff6ff;
+    }
+
+    /* ⭐ 寶可夢名稱加大 */
+    .pokemon-item h4 {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 0 8px 0;
+      color: #111827;
     }
 
     /* 篩選區塊樣式 */
@@ -106,7 +116,6 @@
       gap: 12px;
     }
 
-    /* ✅ 內陰影 + hover/focus 效果 + 圓角過渡 + 微縮放 */
     .filter-group select,
     .filter-group input {
       width: 100%;
@@ -134,7 +143,6 @@
                   0 0 0 2px rgba(37, 99, 235, 0.2);
     }
 
-    /* 搜尋框帶放大鏡 */
     .search-box input {
       padding-left: 32px;
       height: 42px;
@@ -142,18 +150,15 @@
       background-size: 16px 16px;
     }
 
-    /* ✅ 手機版 RWD 修正 */
     @media (max-width: 640px) {
       body { padding: 6px; }
-      .container { max-width: 100%; padding: 8px; overflow-x: hidden; } /* ⭐ 不超出螢幕 */
+      .container { max-width: 100%; padding: 8px; overflow-x: hidden; }
       .card { padding: 12px; }
       .title { font-size: 20px; }
       .subtitle { font-size: 12px; }
-      .filter-body { gap: 10px; }
-      .pokemon-item { font-size: 14px; }
-      .pokemon-item h4 { font-size: 15px; }
+      .pokemon-item h4 { font-size: 16px; } /* 手機稍微小一點 */
       #pokemonList {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* ⭐ 不撐爆 */
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 8px;
         width: 100%;
       }
@@ -176,12 +181,12 @@
       <div class="filter-body">
         <div class="filter-group">
           <select id="typeSelect">
-            <option value="" class="placeholder">全部屬性</option>
+            <option value="">全部屬性</option>
           </select>
         </div>
         <div class="filter-group">
           <select id="pokemonSelect">
-            <option value="" class="placeholder">請選擇寶可夢</option>
+            <option value="">請選擇寶可夢</option>
           </select>
         </div>
         <div class="filter-group search-box">
@@ -256,7 +261,7 @@
         : `所有超級進化寶可夢 (共 ${filtered.length} 隻)`;
 
       pokemonList.innerHTML = "";
-      pokemonSelect.innerHTML = `<option value="" class="placeholder">請選擇寶可夢</option>`;
+      pokemonSelect.innerHTML = `<option value="">請選擇寶可夢</option>`;
 
       filtered.forEach(p => {
         const div = document.createElement("div");
