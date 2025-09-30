@@ -142,10 +142,10 @@
       background-size: 16px 16px;
     }
 
-    /* ✅ 手機版 RWD */
+    /* ✅ 手機版 RWD 修正 */
     @media (max-width: 640px) {
       body { padding: 6px; }
-      .container { max-width: 100%; overflow-x: hidden; } /* ⭐ 防止超出螢幕 */
+      .container { max-width: 100%; padding: 8px; overflow-x: hidden; } /* ⭐ 不超出螢幕 */
       .card { padding: 12px; }
       .title { font-size: 20px; }
       .subtitle { font-size: 12px; }
@@ -153,8 +153,9 @@
       .pokemon-item { font-size: 14px; }
       .pokemon-item h4 { font-size: 15px; }
       #pokemonList {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* ⭐ 縮小最小寬度 */
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* ⭐ 不撐爆 */
         gap: 8px;
+        width: 100%;
       }
     }
   </style>
