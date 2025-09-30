@@ -18,12 +18,9 @@
   <meta name="twitter:description" content="快速查詢所有超進化寶可夢與屬性！">
   <meta name="twitter:image" content="https://kay820112.github.io/PKGO-MEGA-Web/pikachu_running.gif">
 
-  <!-- ⭐ 只新增 favicon（其餘不動） -->
+  <!-- ⭐ favicon（GIF 可能部分瀏覽器不動作，必要時可補 PNG 備援） -->
   <link rel="icon" type="image/gif" href="pikachu_running.gif">
-  <!-- （選用）部分瀏覽器不支援 GIF favicon，可備援一張 PNG：
-  <link rel="icon" type="image/png" href="favicon.png">
-  -->
-  
+
   <style>
     body {
       font-family: sans-serif;
@@ -31,222 +28,106 @@
       margin: 0;
       padding: 10px;
     }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 10px;
-    }
+    .container { max-width: 1000px; margin: auto; padding: 10px; }
     .card {
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 16px;
-      margin-bottom: 16px;
+      background: white; border-radius: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 16px; margin-bottom: 16px;
     }
-    .title {
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      color: #1f2937;
-    }
-    .subtitle {
-      text-align: center;
-      color: #6b7280;
-      font-size: 14px;
-    }
+    .title { text-align: center; font-size: 24px; font-weight: bold; color: #1f2937; }
+    .subtitle { text-align: center; color: #6b7280; font-size: 14px; }
 
-    /* ====== Loading 遮罩 ====== */
+    /* Loading 遮罩 */
     #loadingOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
+      position: fixed; inset: 0; background: rgba(255,255,255,0.9);
+      display: flex; justify-content: center; align-items: center; z-index: 9999;
     }
-    .running-pikachu {
-      width: 100px;
-      height: auto;
-      animation: runLeftRight 2s linear infinite;
-    }
+    .running-pikachu { width: 100px; height: auto; animation: runLeftRight 2s linear infinite; }
     @keyframes runLeftRight {
-      0%   { transform: translateX(-120px) scaleX(1); }
-      49%  { transform: translateX(120px) scaleX(1); }
-      50%  { transform: translateX(120px) scaleX(-1); } /* 翻轉掉頭 */
-      100% { transform: translateX(-120px) scaleX(-1); }
+      0% { transform: translateX(-120px) scaleX(1); }
+      49%{ transform: translateX(120px)  scaleX(1); }
+      50%{ transform: translateX(120px)  scaleX(-1); }
+      100%{transform: translateX(-120px) scaleX(-1); }
     }
 
-    /* ====== Type Badge ====== */
+    /* Type Badge */
     .type-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      font-size: 12px;
-      font-weight: bold;
-      color: white;
-      margin-right: 4px;
-      margin-top: 4px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-block; padding: 2px 8px; border-radius: 9999px;
+      font-size: 12px; font-weight: bold; color: white; margin-right: 4px; margin-top: 4px;
+      transition: transform .2s, box-shadow .2s;
     }
-    .type-badge:hover {
-      box-shadow: 0 0 6px currentColor;
-      transform: scale(1.05);
-    }
+    .type-badge:hover { box-shadow: 0 0 6px currentColor; transform: scale(1.05); }
 
     /* 顏色對照 */
-    .一般 { background-color: #9ca3af; }
-    .火 { background-color: #ef4444; }
-    .水 { background-color: #3b82f6; }
-    .草 { background-color: #22c55e; }
-    .電 { background-color: #facc15; color: black; }
-    .冰 { background-color: #67e8f9; color: black; }
-    .格鬥 { background-color: #b91c1c; }
-    .毒 { background-color: #a855f7; }
-    .地面 { background-color: #ca8a04; }
-    .飛行 { background-color: #818cf8; }
-    .超能力 { background-color: #ec4899; }
-    .蟲 { background-color: #84cc16; }
-    .岩石 { background-color: #a16207; }
-    .幽靈 { background-color: #6b21a8; }
-    .龍 { background-color: #4338ca; }
-    .惡 { background-color: #374151; }
-    .鋼 { background-color: #6b7280; }
-    .妖精 { background-color: #f9a8d4; }
+    .一般{background:#9ca3af;}
+    .火{background:#ef4444;}
+    .水{background:#3b82f6;}
+    .草{background:#22c55e;}
+    .電{background:#facc15;color:black;}
+    .冰{background:#67e8f9;color:black;}
+    .格鬥{background:#b91c1c;}
+    .毒{background:#a855f7;}
+    .地面{background:#ca8a04;}
+    .飛行{background:#818cf8;}
+    .超能力{background:#ec4899;}
+    .蟲{background:#84cc16;}
+    .岩石{background:#a16207;}
+    .幽靈{background:#6b21a8;}
+    .龍{background:#4338ca;}
+    .惡{background:#374151;}
+    .鋼{background:#6b7280;}
+    .妖精{background:#f9a8d4;}
 
-    /* ====== 卡片 ====== */
-    .pokemon-item {
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 10px;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    /* 卡片 */
+    .pokemon-item{
+      border:2px solid #e5e7eb; border-radius:8px; padding:10px; cursor:pointer;
+      transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
     }
-    .pokemon-item:hover {
-      border-color: #9ca3af;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transform: scale(1.03);
+    .pokemon-item:hover{ border-color:#9ca3af; box-shadow:0 4px 12px rgba(0,0,0,.15); transform:scale(1.03); }
+    .pokemon-item.active{ border-color:#3b82f6; background:#eff6ff; }
+    .pokemon-item h4{ font-size:18px; font-weight:700; margin:0 0 8px 0; color:#111827; transition: all .3s ease; }
+    .pokemon-item:hover h4{
+      background:linear-gradient(270deg,#2563eb,#9333ea,#2563eb); background-size:600% 600%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:gradientMove 6s ease infinite;
     }
-    .pokemon-item.active {
-      border-color: #3b82f6;
-      background: #eff6ff;
+    .pokemon-item.active h4{
+      background:linear-gradient(90deg,#2563eb,#9333ea); -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:none;
     }
-    .pokemon-item h4 {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 0 0 8px 0;
-      color: #111827;
-      transition: all 0.3s ease;
-    }
-    .pokemon-item:hover h4 {
-      background: linear-gradient(270deg, #2563eb, #9333ea, #2563eb);
-      background-size: 600% 600%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientMove 6s ease infinite;
-    }
-    .pokemon-item.active h4 {
-      background: linear-gradient(90deg, #2563eb, #9333ea);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: none;
-    }
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+    @keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-    /* ====== 進場動畫 ====== */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeUp 0.8s ease forwards;
+    /* 進場動畫 */
+    .fade-up{opacity:0; transform:translateY(10px); animation:fadeUp .8s ease forwards;}
+    @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
+
+    /* 篩選 */
+    .filter-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+    .filter-title{font-weight:bold; color:#1f2937; font-size:16px;}
+    .clear-btn{background:none; border:none; color:#3b82f6; font-size:14px; cursor:pointer;}
+    .clear-btn:hover{text-decoration:underline;}
+    .filter-body{display:flex; flex-direction:column; gap:12px;}
+    .filter-group select,.filter-group input{
+      width:100%; padding:10px; border:2px solid #d1d5db; border-radius:8px; font-size:14px; box-sizing:border-box;
+      background:#fff; box-shadow:inset 0 1px 3px rgba(0,0,0,.08); transition:border-color .2s, box-shadow .2s, border-radius .3s, transform .2s;
     }
-    @keyframes fadeUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .filter-group select:hover,.filter-group input:hover{border-color:#3b82f6; box-shadow:inset 0 1px 3px rgba(0,0,0,.12);}
+    .filter-group select:focus,.filter-group input:focus{
+      outline:none; border-color:#2563eb; border-radius:12px; transform:scale(1.02);
+      box-shadow:inset 0 1px 3px rgba(0,0,0,.15),0 0 0 2px rgba(37,99,235,.2);
+    }
+    .search-box input{
+      padding-left:32px; height:42px;
+      background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="%23a1a1aa" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat 8px center;
+      background-size:16px 16px;
     }
 
-    /* 篩選區塊 */
-    .filter-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .filter-title {
-      font-weight: bold;
-      color: #1f2937;
-      font-size: 16px;
-    }
-    .clear-btn {
-      background: none;
-      border: none;
-      color: #3b82f6;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .clear-btn:hover {
-      text-decoration: underline;
-    }
-    .filter-body {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .filter-group select,
-    .filter-group input {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-      box-sizing: border-box;
-      background-color: #fff;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
-      transition: border-color 0.2s, box-shadow 0.2s, border-radius 0.3s, transform 0.2s;
-    }
-    .filter-group select:hover,
-    .filter-group input:hover {
-      border-color: #3b82f6;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
-    }
-    .filter-group select:focus,
-    .filter-group input:focus {
-      outline: none;
-      border-color: #2563eb;
-      border-radius: 12px;
-      transform: scale(1.02);
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.15),
-                  0 0 0 2px rgba(37, 99, 235, 0.2);
-    }
-    .search-box input {
-      padding-left: 32px;
-      height: 42px;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="%23a1a1aa" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat 8px center;
-      background-size: 16px 16px;
-    }
-
-    @media (max-width: 640px) {
-      body { padding: 6px; }
-      .container { max-width: 100%; padding: 8px; overflow-x: hidden; }
-      .card { padding: 12px; }
-      .title { font-size: 20px; }
-      .subtitle { font-size: 12px; }
-      .pokemon-item h4 { font-size: 16px; }
-      #pokemonList {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 8px;
-        width: 100%;
-      }
+    @media (max-width:640px){
+      body{padding:6px;} .container{max-width:100%; padding:8px; overflow-x:hidden;}
+      .card{padding:12px;} .title{font-size:20px;} .subtitle{font-size:12px;} .pokemon-item h4{font-size:16px;}
+      #pokemonList{grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; width:100%;}
     }
   </style>
 </head>
 <body>
-  <!-- ⭐ 載入遮罩 (皮卡丘左右來回跑) -->
+  <!-- Loading -->
   <div id="loadingOverlay">
     <img class="running-pikachu" src="pikachu_running.gif" alt="Loading..." />
   </div>
@@ -291,60 +172,96 @@
   </div>
 
   <script>
-    const url =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrBQ6lQHjl-iuSWbQJjlgJXovQRFHqQ0ML4L4VoPVjIQYXygc3VxlINrGs8nY3NqDh_z-bE38M4I-Z/pub?gid=0&single=true&output=csv";
+    // === 兩個工作表的 CSV 來源 ===
+    const SHEET_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrBQ6lQHjl-iuSWbQJjlgJXovQRFHqQ0ML4L4VoPVjIQYXygc3VxlINrGs8nY3NqDh_z-bE38M4I-Z/pub";
+    const urlTypes  = `${SHEET_BASE}?gid=0&single=true&output=csv`;            // 超級淨化（名稱 + 屬性✔）
+    const urlEnergy = `${SHEET_BASE}?gid=557191716&single=true&output=csv`;    // 所需能量表（開圖、總量）
 
-    let data = [];
+    // === 全域狀態 ===
+    let data = [];           // [{ name, types:[…], open, total }]
+    let energyMap = {};      // { name: {open, total} }
     let selectedType = "";
     let selectedPokemon = "";
     let searchTerm = "";
 
-    const typeSelect = document.getElementById("typeSelect");
+    // === DOM 快取 ===
+    const typeSelect    = document.getElementById("typeSelect");
     const pokemonSelect = document.getElementById("pokemonSelect");
-    const searchInput = document.getElementById("searchInput");
-    const detailCard = document.getElementById("detailCard");
-    const pokemonList = document.getElementById("pokemonList");
-    const listTitle = document.getElementById("listTitle");
-    const loadingOverlay = document.getElementById("loadingOverlay");
+    const searchInput   = document.getElementById("searchInput");
+    const detailCard    = document.getElementById("detailCard");
+    const pokemonList   = document.getElementById("pokemonList");
+    const listTitle     = document.getElementById("listTitle");
+    const loadingOverlay= document.getElementById("loadingOverlay");
 
-    async function loadSheet() {
-      const res = await fetch(url);
+    // 工具：CSV 轉陣列
+    function parseCSV(text){
+      // 簡易版：以換行拆列、逗號拆欄。若未來欄位含逗號可換成更完整的 CSV 解析器。
+      return text.replace(/\r/g,"").split("\n").map(r => r.split(","));
+    }
+
+    // 讀取能量表：處理左右兩張表
+    async function loadEnergy(){
+      const res  = await fetch(urlEnergy);
       const text = await res.text();
-      const rows = text.split("\n").map(r => r.split(","));
-      const headers = rows[0].slice(1);
+      const rows = parseCSV(text);
 
+      // 跳過標題列；逐列掃描，偵測像「超級XXX」的名稱，並抓 index+1（開圖）、index+5（總量）
+      for (let i = 1; i < rows.length; i++){
+        const row = rows[i];
+        for (let j = 0; j < row.length; j++){
+          const name = row[j]?.trim();
+          if (!name) continue;
+          // 粗略鑑別：包含「超」當名稱（你也可改成 energyMap[name] === undefined 時才寫入）
+          if (/超/.test(name)){
+            const open  = row[j+1]?.trim();
+            const total = row[j+5]?.trim();
+            // 只要有任一數值就記錄
+            if ((open && !isNaN(open)) || (total && !isNaN(total))){
+              energyMap[name] = {
+                open:  open  && !isNaN(open)  ? Number(open)  : "",
+                total: total && !isNaN(total) ? Number(total) : ""
+              };
+            }
+            j += 5; // 快速跳到下一塊
+          }
+        }
+      }
+    }
+
+    // 讀取名稱 + 屬性✔
+    async function loadTypes(){
+      const res  = await fetch(urlTypes);
+      const text = await res.text();
+      const rows = parseCSV(text);
+
+      const headers = rows[0].slice(1); // 第 1 欄為名稱，其餘為屬性欄位
       data = rows.slice(1).map(r => {
-        const name = r[0].trim();
+        const name  = (r[0] || "").trim();
         const types = headers.filter((_, i) => r[i+1] && r[i+1].trim() === "✔");
-        return { name, types };
+        const energy = energyMap[name] || {open:"", total:""};
+        return { name, types, open: energy.open, total: energy.total };
       });
 
+      // 初始化下拉（屬性）
       headers.forEach(t => {
         const opt = document.createElement("option");
-        opt.value = t;
-        opt.textContent = t;
+        opt.value = t; opt.textContent = t;
         typeSelect.appendChild(opt);
       });
 
+      // 初始化下拉（寶可夢）
       data.forEach(p => {
         const opt = document.createElement("option");
-        opt.value = p.name;
-        opt.textContent = p.name;
+        opt.value = p.name; opt.textContent = p.name;
         pokemonSelect.appendChild(opt);
       });
-
-      renderList();
-
-      // ⭐ 確保至少顯示 1 秒才隱藏
-      setTimeout(() => {
-        loadingOverlay.style.display = "none";
-      }, 1000);
     }
 
-    function renderList(withAnimation = false) {
+    // 渲染清單
+    function renderList(withAnimation = false){
       let filtered = data.filter(p => {
         return (!selectedType || p.types.includes(selectedType)) &&
-               (!searchTerm || p.name.includes(searchTerm));
+               (!searchTerm   || p.name.includes(searchTerm));
       });
 
       listTitle.textContent = selectedType
@@ -357,48 +274,40 @@
       filtered.forEach((p, index) => {
         const div = document.createElement("div");
         div.className = "pokemon-item" + (selectedPokemon === p.name ? " active" : "");
-        if (withAnimation) {
+        if (withAnimation){
           div.classList.add("fade-up");
           div.style.animationDelay = `${index * 0.05}s`;
         }
-        div.innerHTML = `<h4>${p.name}</h4>` +
-                        p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("");
-        div.onclick = () => {
-          selectedPokemon = p.name;
-          renderDetail();
-          renderList(false);
-        };
+        div.innerHTML =
+          `<h4>${p.name}</h4>` +
+          p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("");
+        div.onclick = () => { selectedPokemon = p.name; renderDetail(); renderList(false); };
         pokemonList.appendChild(div);
 
         const opt = document.createElement("option");
-        opt.value = p.name;
-        opt.textContent = p.name;
+        opt.value = p.name; opt.textContent = p.name;
         pokemonSelect.appendChild(opt);
       });
     }
 
-    function renderDetail() {
-      if (!selectedPokemon) {
-        detailCard.style.display = "none";
-        return;
-      }
+    // 渲染詳細
+    function renderDetail(){
+      if (!selectedPokemon){ detailCard.style.display = "none"; return; }
       const p = data.find(x => x.name === selectedPokemon);
       detailCard.style.display = "block";
-      detailCard.innerHTML = `<h2>${p.name}</h2><div>${p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("")}</div>`;
+      detailCard.innerHTML = `
+        <h2>${p.name}</h2>
+        <div>${p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("")}</div>
+        <p style="margin-top:8px;">開圖能量：${p.open !== "" ? p.open : "－"}</p>
+        <p>練滿能量：${p.total !== "" ? p.total : "－"}</p>
+      `;
     }
 
-    typeSelect.onchange = e => {
-      selectedType = e.target.value;
-      selectedPokemon = "";
-      renderDetail();
-      renderList(true);
-    };
-    pokemonSelect.onchange = e => {
-      selectedPokemon = e.target.value;
-      renderDetail();
-      renderList(false);
-    };
+    // 互動：篩選
+    typeSelect.onchange = e => { selectedType = e.target.value; selectedPokemon = ""; renderDetail(); renderList(true); };
+    pokemonSelect.onchange = e => { selectedPokemon = e.target.value; renderDetail(); renderList(false); };
 
+    // 互動：搜尋（500ms debounce）
     let debounceTimer;
     searchInput.oninput = e => {
       clearTimeout(debounceTimer);
@@ -408,19 +317,20 @@
       }, 500);
     };
 
+    // 互動：清除
     document.getElementById("clearBtn").onclick = () => {
-      selectedType = "";
-      selectedPokemon = "";
-      searchTerm = "";
-      typeSelect.value = "";
-      pokemonSelect.value = "";
-      searchInput.value = "";
-      renderDetail();
-      renderList(true);
+      selectedType = ""; selectedPokemon = ""; searchTerm = "";
+      typeSelect.value = ""; pokemonSelect.value = ""; searchInput.value = "";
+      renderDetail(); renderList(true);
     };
 
-    loadSheet();
+    // 進入點：先抓能量，再抓屬性 → render → 關閉 loading
+    (async function init(){
+      await loadEnergy();
+      await loadTypes();
+      renderList();
+      setTimeout(() => { loadingOverlay.style.display = "none"; }, 1000); // 至少顯示 1 秒
+    })();
   </script>
 </body>
 </html>
-
