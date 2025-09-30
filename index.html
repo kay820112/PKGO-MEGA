@@ -38,7 +38,7 @@
       display: inline-block;
       padding: 2px 8px;
       border-radius: 9999px;
-      font-size: 12px;   /* ⭐ 屬性縮小一點 */
+      font-size: 12px;
       font-weight: bold;
       color: white;
       margin-right: 4px;
@@ -80,12 +80,28 @@
       background: #eff6ff;
     }
 
-    /* ⭐ 寶可夢名稱加大 */
+    /* ⭐ 名稱正常 */
     .pokemon-item h4 {
       font-size: 18px;
       font-weight: bold;
       margin: 0 0 8px 0;
       color: #111827;
+      transition: all 0.3s ease;
+    }
+
+    /* ⭐ hover = 動態漸層 */
+    .pokemon-item:hover h4 {
+      background: linear-gradient(270deg, #2563eb, #9333ea, #2563eb);
+      background-size: 600% 600%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientMove 3s ease infinite;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     /* 篩選區塊樣式 */
@@ -156,7 +172,7 @@
       .card { padding: 12px; }
       .title { font-size: 20px; }
       .subtitle { font-size: 12px; }
-      .pokemon-item h4 { font-size: 16px; } /* 手機稍微小一點 */
+      .pokemon-item h4 { font-size: 16px; }
       #pokemonList {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 8px;
