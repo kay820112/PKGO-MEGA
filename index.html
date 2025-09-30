@@ -34,6 +34,19 @@
       color: #6b7280;
       font-size: 14px;
     }
+
+    /* ====== Loading 遮罩 ====== */
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* ====== Type Badge ====== */
     .type-badge {
       display: inline-block;
       padding: 2px 8px;
@@ -70,7 +83,7 @@
     .鋼 { background-color: #6b7280; }
     .妖精 { background-color: #f9a8d4; }
 
-    /* ⭐ 卡片本身 */
+    /* ====== 卡片 ====== */
     .pokemon-item {
       border: 2px solid #e5e7eb;
       border-radius: 8px;
@@ -78,7 +91,6 @@
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
-    /* ⭐ hover 放大 */
     .pokemon-item:hover {
       border-color: #9ca3af;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -88,8 +100,6 @@
       border-color: #3b82f6;
       background: #eff6ff;
     }
-
-    /* ⭐ 名稱正常 */
     .pokemon-item h4 {
       font-size: 18px;
       font-weight: bold;
@@ -97,7 +107,6 @@
       color: #111827;
       transition: all 0.3s ease;
     }
-    /* ⭐ hover 名稱漸層動畫 */
     .pokemon-item:hover h4 {
       background: linear-gradient(270deg, #2563eb, #9333ea, #2563eb);
       background-size: 600% 600%;
@@ -105,21 +114,19 @@
       -webkit-text-fill-color: transparent;
       animation: gradientMove 6s ease infinite;
     }
-    /* ⭐ active 名稱靜態漸層 */
     .pokemon-item.active h4 {
       background: linear-gradient(90deg, #2563eb, #9333ea);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: none;
     }
-
     @keyframes gradientMove {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
-    /* ⭐ 進場動畫（只在搜尋/篩選時加 class） */
+    /* ====== 進場動畫 ====== */
     .fade-up {
       opacity: 0;
       transform: translateY(10px);
@@ -132,6 +139,7 @@
       }
     }
 
+    /* 篩選區塊 */
     .filter-header {
       display: flex;
       justify-content: space-between;
@@ -207,6 +215,11 @@
   </style>
 </head>
 <body>
+  <!-- ⭐ 載入遮罩 (改成 GIF) -->
+  <div id="loadingOverlay">
+    <img src="pikachu_running.gif" alt="Loading..." style="width:100px; height:auto;" />
+  </div>
+
   <div class="container">
     <div class="card">
       <h1 class="title">Pokemon GO 超級進化查詢</h1>
@@ -261,6 +274,7 @@
     const detailCard = document.getElementById("detailCard");
     const pokemonList = document.getElementById("pokemonList");
     const listTitle = document.getElementById("listTitle");
+    const loadingOverlay = document.getElementById("loadingOverlay");
 
     async function loadSheet() {
       const res = await fetch(url);
@@ -289,6 +303,7 @@
       });
 
       renderList();
+      loadingOverlay.style.display = "none"; // ⭐ 載入完成隱藏遮罩
     }
 
     function renderList(withAnimation = false) {
@@ -307,19 +322,16 @@
       filtered.forEach((p, index) => {
         const div = document.createElement("div");
         div.className = "pokemon-item" + (selectedPokemon === p.name ? " active" : "");
-
-        // ⭐ 只有搜尋/篩選時才有進場動畫
         if (withAnimation) {
           div.classList.add("fade-up");
           div.style.animationDelay = `${index * 0.05}s`;
         }
-
         div.innerHTML = `<h4>${p.name}</h4>` +
                         p.types.map(t => `<span class="type-badge ${t}">${t}</span>`).join("");
         div.onclick = () => {
           selectedPokemon = p.name;
           renderDetail();
-          renderList(false); // 點擊不跑動畫
+          renderList(false);
         };
         pokemonList.appendChild(div);
 
@@ -344,21 +356,20 @@
       selectedType = e.target.value;
       selectedPokemon = "";
       renderDetail();
-      renderList(true); // 篩選才跑動畫
+      renderList(true);
     };
     pokemonSelect.onchange = e => {
       selectedPokemon = e.target.value;
       renderDetail();
-      renderList(false); // 選取不跑動畫
+      renderList(false);
     };
 
-    // ⭐ debounce 搜尋 500ms
     let debounceTimer;
     searchInput.oninput = e => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         searchTerm = e.target.value;
-        renderList(true); // 搜尋才跑動畫
+        renderList(true);
       }, 500);
     };
 
@@ -370,11 +381,10 @@
       pokemonSelect.value = "";
       searchInput.value = "";
       renderDetail();
-      renderList(true); // 清除時也跑動畫
+      renderList(true);
     };
 
     loadSheet();
   </script>
 </body>
 </html>
-
