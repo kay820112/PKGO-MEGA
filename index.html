@@ -69,11 +69,12 @@
       border-radius: 8px;
       padding: 10px;
       cursor: pointer;
-      transition: 0.2s;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
     .pokemon-item:hover {
       border-color: #9ca3af;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: scale(1.03); /* ⭐ 卡片放大 */
     }
     .pokemon-item.active {
       border-color: #3b82f6;
@@ -89,13 +90,13 @@
       transition: all 0.3s ease;
     }
 
-    /* ⭐ hover = 動態漸層 */
+    /* ⭐ hover = 動態漸層（速度變慢） */
     .pokemon-item:hover h4 {
       background: linear-gradient(270deg, #2563eb, #9333ea, #2563eb);
       background-size: 600% 600%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: gradientMove 3s ease infinite;
+      animation: gradientMove 6s ease infinite; /* ⭐ 放慢到 6 秒 */
     }
 
     @keyframes gradientMove {
