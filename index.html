@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ⭐ 手機正確縮放 -->
   <title>Pokemon GO 超級進化查詢</title>
   <style>
     body {
@@ -144,6 +145,7 @@
     /* ✅ 手機版 RWD */
     @media (max-width: 640px) {
       body { padding: 6px; }
+      .container { max-width: 100%; overflow-x: hidden; } /* ⭐ 防止超出螢幕 */
       .card { padding: 12px; }
       .title { font-size: 20px; }
       .subtitle { font-size: 12px; }
@@ -151,7 +153,7 @@
       .pokemon-item { font-size: 14px; }
       .pokemon-item h4 { font-size: 15px; }
       #pokemonList {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* ⭐ 縮小最小寬度 */
         gap: 8px;
       }
     }
