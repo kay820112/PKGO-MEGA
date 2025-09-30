@@ -4,6 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokemon GO 超級進化查詢</title>
+
+  <!-- 🌐 Open Graph 分享資訊（LINE/Discord 會讀取） -->
+  <meta property="og:title" content="Pokemon GO 超級進化查詢">
+  <meta property="og:description" content="快速查詢所有超進化寶可夢與屬性！">
+  <meta property="og:image" content="https://kay820112.github.io/PKGO-MEGA-Web/pikachu_running.gif">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kay820112.github.io/PKGO-MEGA-Web/">
+
+  <!-- 🐦 Twitter 分享卡片 -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Pokemon GO 超級進化查詢">
+  <meta name="twitter:description" content="快速查詢所有超進化寶可夢與屬性！">
+  <meta name="twitter:image" content="https://kay820112.github.io/PKGO-MEGA-Web/pikachu_running.gif">
+
+  <!-- ⭐ 只新增 favicon（其餘不動） -->
+  <link rel="icon" type="image/gif" href="pikachu_running.gif">
+  <!-- （選用）部分瀏覽器不支援 GIF favicon，可備援一張 PNG：
+  <link rel="icon" type="image/png" href="favicon.png">
+  -->
+  
   <style>
     body {
       font-family: sans-serif;
@@ -315,10 +335,10 @@
 
       renderList();
 
-      // ⭐ 確保至少顯示 0.5 秒才隱藏
+      // ⭐ 確保至少顯示 2 秒才隱藏
       setTimeout(() => {
         loadingOverlay.style.display = "none";
-      }, 500);
+      }, 2000);
     }
 
     function renderList(withAnimation = false) {
@@ -403,5 +423,3 @@
   </script>
 </body>
 </html>
-
-
